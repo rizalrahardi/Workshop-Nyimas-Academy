@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>team</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery-ui/jquery-ui.js"></script>
+    <link rel="stylesheet" type="text/css" href="js/jquery-ui/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+
+<body>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <h1 class="mb-5" align="center">Data Nama Olahraga</h1>
+    <div class="container">
+        <div class="row mb">
+            <div class="col-12">
+                <div class="form-group" align="center">
+                    <label for="queryTeam">Nama Tim:</label>
+                    <input type="text" class="from-control" id="queryTeam" placeholder="Nama Tim">
+                    <button id="search" type="button" class="btn btn-primary" onclick="searchTeam()">Search</button>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="result">
+        </div>
+    </div>
+</body>
+<script>
+    fetch('https://www.thesportsdb.com/api/v1/json/1/search_all_teams.php?l=English%20Premier%20League')
+        .then(function(res) {
+            return res.json();
+        })
+        .then(function(data) {
+            console.log(data);
+            let result = ``;
+            let i = 0;
+            let jumlah_objek = data.teams.length;
+            let team = data.teams;
+            while (i < jumlah_objek) {
+                result +=
+                    `<div class="col-sm">
+                        <div class="card mb-4" style="width:20rem;">
+                        <img class="card-img-top" src="${team[i].strTeamBadge}" alt="card image cap">
+                            <div class="card-body">
+                            <h5 class="card-title">${team[i].strTeam}</h5>
+                            <p class="card-text">${team[i].strDescriptionEN.slice(0,100)}</p>
+                        </div>
+                    </div>
+                </div>`;
+                document.getElementById('result').innerHTML = result;
+                i++;
+
+            }
+        });
+
+    function searchTeam() {
+        let parameter = document.getElementById('queryTeam').value;
+        fetch('https://www.thesportsdb.com/api/v1/json/1/searchteams.php?t=' + parameter)
+            .then(function(res) {
+                return res.json();
+            })
+            .then(function(search_data) {
+                let result = ``;
+                let i = 0;
+                console.log(search_data)
+                document.getElementById('result').innerHTML = "Data nya kosong";
+
+                if (search_data.teams) {
+                    let jumlah_objek = search_data.teams.length;
+                    let team = search_data.teams;
+                    while (i < jumlah_objek) {
+                        result +=
+                            `<div class="col-sm">
+                        <div class="card mb-4" style="width:20rem;">
+                        <img class="card-img-top" src="${team[i].strTeamBadge}" alt="card image cap">
+                            <div class="card-body">
+                            <h5 class="card-title">${team[i].strTeam}</h5>
+                            <p class="card-text">${team[i].strDescriptionEN.slice(0,100)}</p>
+                        </div>
+                    </div>
+                </div>`;
+                        document.getElementById('result').innerHTML = result;
+                        i++;
+                    }
+                }
+            })
+    };
+</script>
+
+</html>
